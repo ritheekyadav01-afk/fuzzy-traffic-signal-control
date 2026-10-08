@@ -33,9 +33,9 @@
     52.154
   ],
   "theta_oldrun": [
-    32.784,
-    30.785,
-    52.154
+    26.36,
+    28.995,
+    49.378
   ],
   "theta_rerun_this_session": [
     32.783710241502185,
@@ -110,25 +110,25 @@
         "total_vehicles": 2142
       }
     },
-    "fuzzy_v1_ga_oldrun(single-seed; used by v1 replays)": {
+    "fuzzy_v1_ga_oldrun(earlier single-seed GA, superseded)": {
       "light": {
-        "avg_delay_sec": 13.256198347107437,
+        "avg_delay_sec": 12.603305785123966,
         "total_vehicles": 726
       },
       "moderate": {
-        "avg_delay_sec": 24.05281207133059,
+        "avg_delay_sec": 23.103909465020575,
         "total_vehicles": 1458
       },
       "uneven": {
-        "avg_delay_sec": 217.73702101359703,
+        "avg_delay_sec": 228.89616810877627,
         "total_vehicles": 1618
       },
       "rush_hour": {
-        "avg_delay_sec": 69.96491763270286,
+        "avg_delay_sec": 73.3306894447834,
         "total_vehicles": 1639
       },
       "heavy": {
-        "avg_delay_sec": 407.94677871148457,
+        "avg_delay_sec": 408.4579831932773,
         "total_vehicles": 2142
       }
     }
@@ -158,21 +158,21 @@
       "mean_held_out_pct": 37.90682287326026,
       "mean_trained_on_pct": 19.455289798167673
     },
-    "fuzzy_v1_ga_oldrun(single-seed; used by v1 replays)": {
+    "fuzzy_v1_ga_oldrun(earlier single-seed GA, superseded)": {
       "improvement_vs_fixed30_pct": {
-        "light": 0.10898334111786444,
-        "moderate": 1.264147756067349,
-        "uneven": 56.9927382973178,
-        "rush_hour": 63.46770481070809,
-        "heavy": 12.345940935812429
+        "light": 5.028802740152582,
+        "moderate": 5.159355819584441,
+        "uneven": 54.78859149092272,
+        "rush_hour": 61.71026160146674,
+        "heavy": 12.236100264971814
       },
-      "mean_all5_pct": 26.835903028204704,
-      "mean_held_out_pct": 37.90682287326026,
-      "mean_trained_on_pct": 19.455289798167673
+      "mean_all5_pct": 27.784622383419663,
+      "mean_held_out_pct": 36.973180933219275,
+      "mean_trained_on_pct": 21.658916683553247
     }
   },
   "notes": [
     "Headline 26.8% = mean of 5 legacy scenarios (multiseed theta). 37.9% = mean of the 2 held-out (rush_hour, heavy). 57.0% = uneven only.",
-    "Earlier quoted 27.8% = mean of 5 scenarios with the OLD single-seed theta; 32.5% came from an earlier 9-scenario draft not reproducible from files in this folder."
+    "results.json == results_multiseed.json == official v1 (user promoted it; traces/replays were rebuilt from it: final fuzzy+GA cumulative delay 352298.5 / 1618 veh = 217.7 s). Earlier quoted 27.8% = mean of 5 scenarios with the OLD single-seed theta; 32.5% came from an earlier 9-scenario draft not reproducible from files in this folder."
   ]
 }

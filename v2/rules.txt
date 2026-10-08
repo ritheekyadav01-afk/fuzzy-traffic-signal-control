@@ -1,0 +1,41 @@
+FUZZY-V2 RULE BASE (27 rules, IF own_queue AND waiting AND opposing_queue THEN green)
+
+R01: IF own_queue is low  AND waiting is short    AND opposing_queue is low  THEN green is short
+R02: IF own_queue is low  AND waiting is short    AND opposing_queue is med  THEN green is short
+R03: IF own_queue is low  AND waiting is short    AND opposing_queue is high THEN green is short
+R04: IF own_queue is low  AND waiting is moderate AND opposing_queue is low  THEN green is short
+R05: IF own_queue is low  AND waiting is moderate AND opposing_queue is med  THEN green is short
+R06: IF own_queue is low  AND waiting is moderate AND opposing_queue is high THEN green is short
+R07: IF own_queue is low  AND waiting is long     AND opposing_queue is low  THEN green is short
+R08: IF own_queue is low  AND waiting is long     AND opposing_queue is med  THEN green is short
+R09: IF own_queue is low  AND waiting is long     AND opposing_queue is high THEN green is short
+R10: IF own_queue is med  AND waiting is short    AND opposing_queue is low  THEN green is medium
+R11: IF own_queue is med  AND waiting is short    AND opposing_queue is med  THEN green is short
+R12: IF own_queue is med  AND waiting is short    AND opposing_queue is high THEN green is short
+R13: IF own_queue is med  AND waiting is moderate AND opposing_queue is low  THEN green is medium
+R14: IF own_queue is med  AND waiting is moderate AND opposing_queue is med  THEN green is medium
+R15: IF own_queue is med  AND waiting is moderate AND opposing_queue is high THEN green is short
+R16: IF own_queue is med  AND waiting is long     AND opposing_queue is low  THEN green is long
+R17: IF own_queue is med  AND waiting is long     AND opposing_queue is med  THEN green is long
+R18: IF own_queue is med  AND waiting is long     AND opposing_queue is high THEN green is medium
+R19: IF own_queue is high AND waiting is short    AND opposing_queue is low  THEN green is long
+R20: IF own_queue is high AND waiting is short    AND opposing_queue is med  THEN green is long
+R21: IF own_queue is high AND waiting is short    AND opposing_queue is high THEN green is long
+R22: IF own_queue is high AND waiting is moderate AND opposing_queue is low  THEN green is long
+R23: IF own_queue is high AND waiting is moderate AND opposing_queue is med  THEN green is long
+R24: IF own_queue is high AND waiting is moderate AND opposing_queue is high THEN green is long
+R25: IF own_queue is high AND waiting is long     AND opposing_queue is low  THEN green is long
+R26: IF own_queue is high AND waiting is long     AND opposing_queue is med  THEN green is long
+R27: IF own_queue is high AND waiting is long     AND opposing_queue is high THEN green is long
+
+Rule construction (so the table is explainable, not arbitrary):
+  base level = own-queue level (low->short, med->medium, high->long)
+  +1 level  if waiting is 'long' and own queue >= med   (a starved approach with demand clears)
+  -1 level  if opposing queue is 'high' and own queue is not high   (yield to the heavier side)
+  -1 level  if waiting is 'short', own is 'med' and opposing is not 'low'   (it just had green; share the cycle)
+  levels clipped to [short..long].  When BOTH queues are high the rule is 'long': in saturation long greens
+  waste the least time on the 3 s clearance interval.
+
+Inference: min (AND), optional per-rule weight multiplies firing strength, max aggregation, centroid defuzzification.
+Gene encoding: 12 breakpoints (a<b<c for own_queue, waiting, opposing_queue, green) + optional 27 rule weights in [0.2,1].
+Default breakpoints (own, wait, opp, green):  (6,25,50), (12,55,100), (6,25,50), (15,35,55)

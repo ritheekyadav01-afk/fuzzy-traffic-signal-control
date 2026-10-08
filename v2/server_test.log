@@ -1,0 +1,5 @@
+[server] "GET /healthz HTTP/1.1" 200 -
+[server] "GET /api/predict?queue=30&wait=60&opp=8 HTTP/1.1" 200 -
+[server] "GET /replay?preset=uneven&controller=fuzzy_v2_default&seed=99 HTTP/1.1" 200 -
+[server] "POST /api/simulate HTTP/1.1" 200 -
+[server] "GET /replay?controller=nope HTTP/1.1" 400 -

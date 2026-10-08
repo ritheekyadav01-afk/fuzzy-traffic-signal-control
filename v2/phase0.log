@@ -1,0 +1,36 @@
+re-running v1 GA exactly as final_comparison.py does (pop=40, gen=50, seed=1, 3-seed fitness)...
+  GA done in 100s theta=[32.784 30.785 52.154] final train fitness=60.826s
+re-run theta matches results_multiseed.json: True
+{
+ "fixed_30s": {
+  "light": 13.3,
+  "moderate": 24.4,
+  "uneven": 506.3,
+  "rush_hour": 191.5,
+  "heavy": 465.4
+ },
+ "fuzzy_v1_default": {
+  "light": 12.8,
+  "moderate": 23.9,
+  "uneven": 338.3,
+  "rush_hour": 86.8,
+  "heavy": 428.2
+ },
+ "fuzzy_v1_ga_multiseed(official)": {
+  "light": 13.3,
+  "moderate": 24.1,
+  "uneven": 217.7,
+  "rush_hour": 70.0,
+  "heavy": 407.9
+ },
+ "fuzzy_v1_ga_oldrun(earlier single-seed GA, superseded)": {
+  "light": 12.6,
+  "moderate": 23.1,
+  "uneven": 228.9,
+  "rush_hour": 73.3,
+  "heavy": 408.5
+ }
+}
+fuzzy_v1_default {'mean_all5_pct': 20.2, 'mean_held_out_pct': 31.3, 'mean_trained_on_pct': 12.7}
+fuzzy_v1_ga_multiseed(official) {'mean_all5_pct': 26.8, 'mean_held_out_pct': 37.9, 'mean_trained_on_pct': 19.5}
+fuzzy_v1_ga_oldrun(earlier single-seed GA, superseded) {'mean_all5_pct': 27.8, 'mean_held_out_pct': 37.0, 'mean_trained_on_pct': 21.7}

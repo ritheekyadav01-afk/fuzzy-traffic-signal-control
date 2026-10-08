@@ -23,3 +23,26 @@ Conventions: all commands use `/usr/bin/python3` (3.9.6, numpy 2.0.2, **no matpl
 ## [phase 3] simulate2 (v2/simulate2.py)
 - Pre-drawn arrivals (bulk `rng.poisson` with interleaved NS/EW lambdas) reproduce v1's scalar-call stream EXACTLY: v1 vs simulate2 on 5 legacy scenarios x seeds {99,7,3} x 4 controllers -> max relative diff in avg delay = 0.0 (bit-identical; tolerance asked was 0.5%).
 - Design decision: arrivals are controller-independent, so the same pre-drawn arrays are reused across all controllers/evals (common random numbers => paired comparisons, and ~5x faster fitness).
+
+## [phase 2] baselines (v2/phase2_baselines.py -> v2/data/baselines.json), chosen on TRAIN only
+- Best fixed duration: 29 s by the *normalised* criterion (mean delay relative to the per-run best fixed duration), 56 s by the *raw mean delay* criterion. The two criteria disagree because raw mean is dominated by over-saturated scenarios. Both are kept as baselines ("best_fixed_29", "best_fixed_56"); fixed-30 (the deck baseline) is essentially the normalised optimum.
+- Actuated rule (green = gain x own queue, clipped 10-60): best gain 3.0 (normalised) / 2.5 (raw).
+- Also added: pressure_split (max-pressure style: 70 s budget split by queue share) and longest_queue_first (bang-bang). All conform to controller_fn(queue, waiting[, opposing]).
+- **FINDING (important, unflattering to v1):** on TRAIN/VAL the trivial actuated rule gives delay ratio 0.42 / 0.52 relative to best-fixed, vs 0.66 / 0.71 for v1 fuzzy+GA. v1's controller is clearly better than fixed timing but clearly WORSE than a one-line actuated rule. The v2 comparison must therefore be reported against actuated, not only against fixed-30.
+
+## [phase 4] fuzzy-v2 (v2/fuzzy2.py, rules in v2/rules.txt)
+- 3 inputs (own queue 0-60, wait 0-120, opposing queue 0-60), 27 rules, 3-breakpoint Ruspini partitions (12 genes) + optional 27 rule weights. `repair()` makes every gene vector a valid partition.
+- DECISION: output universe widened to [0,80] and clamped to 10-60 by the simulator: with the v1-style [10,60] universe the centroid of clipped sets can hardly reach 60 s, which handicapped saturated demand. Default (hand-set) fuzzy-v2 scores 0.53 TRAIN ratio vs 0.70 for v1 default (same data), i.e. the opposing-queue input + wider universe already help before any training.
+- v1 controller kept intact as fuzzy-v1 (`controllers.fuzzy_v1` reuses v1's own membership code, only caching output shapes; verified identical in tests).
+
+## [phase 5] optimizers (v2/optimizers.py, v2/run_optimizers.py -> v2/data/opt_results.json, v2/optimizers.log)
+- GA, PSO, SA, same fitness, same budget (2000 evals each), 3 seeds each, 3 structures: fuzzy2_bp (12 genes), fuzzy2_bpw (39 genes), fuzzy1_new (v1's 3-centre controller re-trained on the new TRAIN set).
+- FITNESS CHOICE: mean over TRAIN (scenario, seed) of delay / delay(best fixed 29 s). Reason: raw mean delay is dominated by over-saturated scenarios (v1 weakness: it traded light-traffic performance for heavy). A ratio treats a 5% change on a 13 s scenario like a 5% change on a 500 s scenario. Common random numbers: all controllers see the identical arrivals.
+- Every optimizer gets the hand-designed default as one starting candidate (GA ind 0, PSO particle 0, SA start).
+- Final theta per structure = best VALIDATION score among its 9 runs. TEST untouched until `evaluate_final.py --final`.
+
+## [phase 7 part] prototype pieces written while optimizers run
+- `v2/predict.py` (CLI, rules fired), `v2/server.py` (stdlib http.server; real Python sim, v1 3D viewer fed server-side), `v2/registry.py`, `v2/tests/test_all.py` (22 tests).
+- Server smoke test: /healthz, /api/predict, /replay (1.6 MB page, 0 external script tags), POST /api/simulate, bad controller -> HTTP 400.
+- Test finding: fuzzy-v2 default is monotone only to within 1 s: 27 sub-second violations (max 0.93 s) out of 2048 grid checks, caused by centroid blending. Test tolerance set to 1 s and the caveat documented rather than hidden.
+- Sanity number: actuated rule on legacy `uneven` seed 99 = 49.2 s vs fixed-30 506.3 s (90.3%), v1 fuzzy+GA = 217.7 s (57.0%). Confirms the Phase-2 finding.
