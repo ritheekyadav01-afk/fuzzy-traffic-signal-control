@@ -58,3 +58,16 @@ Conventions: all commands use `/usr/bin/python3` (3.9.6, numpy 2.0.2, **no matpl
 - Selected by VALIDATION: fuzzy2_bp_PSO (seed 2), val 0.5079. Margin over the next candidates is ~0.001-0.002 = noise; selection is nominal, not a real discovery.
 - Monotonicity of trained controllers (tolerance 1 s, 1024 grid checks each way): GA 3/0, PSO 0/6, SA 0/18, bpw-GA 0/0, bpw-PSO 0/0, bpw-SA 0/11 violations (own-queue / opposing-queue). Default: 0/0. Trained controllers are mostly monotone but not guaranteed to be.
 - Validation dry run (not the official numbers): fuzzy2_bp_PSO vs actuated +3.5% [+0.5,+7.0]; vs v1+GA +32.7% [+22.7,+43.4].
+--- FINAL TEST RUN Thu Oct  8 22:16:25 IST 2026 ---
+
+## [phase 6] FINAL TEST EVALUATION (22:16 IST, once; data/TEST_TOUCHED) -> results_v2.json, RESULTS.md
+- Official v2 candidate (validation-selected): fuzzy2_bp_PSO. TEST-60: mean delay 71.9 s vs fixed-30 173.5 s (+58.5% [51.7, 65.1]), vs v1 fuzzy+GA +42.4% [36.2, 48.5] (59 W / 0 L / 1 T) -> DECISION RULE CLEARED, v2 promoted.
+- Equally important: actuated rule = 74.6 s (+57.8% vs fixed-30); v2 beats it by +4.3% [2.4, 6.5] (31 W / 14 L / 15 T). v1 fuzzy+GA = 105.9 s (+34.9%) is much WORSE than the trivial actuated rule.
+- LEGACY-5 (seed 99): v2 mean-of-5 +47.7%, held-out +46.7%, uneven 39.0 s (+92.3%); v1: 26.8 / 37.9 / 57.0 (reproduced exactly).
+- Stress set (extra; rates to 0.55): v2 +33.1%, actuated +32.0%, v1+GA +20.5% vs fixed-30.
+
+## [phase 7/8] wrap-up
+- server/predict verified (curl + unit tests + headless screenshot of v2 replay). 23 unit tests pass. `run_all.py --quick` reproduced baseline_v1.json and scenarios.json byte-for-byte; only timing fields differ.
+- v2 replays regenerated into v2/ (replay_3d_v2.html, trace_*_v2.json) because v2 was promoted; v1 files untouched (git diff vs v1-verified is empty outside v2/).
+- Decisions worth re-reading: (1) widened fuzzy output universe to 0-80 (clamped by the sim); (2) normalised fitness vs best-fixed 29 s; (3) tie threshold 1%; (4) stress set generated after the TEST run, used for nothing.
+- NOT done: full optimizer re-run end-to-end a second time; real-time visual playback of web/3D; any edit to the PowerPoint decks.

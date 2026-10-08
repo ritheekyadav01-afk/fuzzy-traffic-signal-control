@@ -326,6 +326,6 @@
    "val_fitness": 0.5101633954937572
   }
  },
- "promoted": null,
+ "promoted": true,
  "note": "official_v2 is the validation-best fuzzy-v2 candidate; \"promoted\" is filled in after the single test evaluation"
 }

@@ -1,0 +1,175 @@
+
+=== scenarios (fixed seeds) ===
+train 40 {'constant': 12, 'rush_ramp': 6, 'surge': 6, 'one_sided_surge': 6, 'lull': 5, 'balanced_then_skewed': 5}
+validation 20 {'constant': 6, 'rush_ramp': 3, 'surge': 3, 'one_sided_surge': 3, 'lull': 3, 'balanced_then_skewed': 2}
+test 60 {'constant': 18, 'rush_ramp': 9, 'surge': 9, 'one_sided_surge': 8, 'lull': 8, 'balanced_then_skewed': 8}
+legacy 5 {'constant': 5}
+--- scenarios (fixed seeds): exit 0 (0s)
+
+=== phase 0: re-run v1 + baseline_v1.json ===
+re-running v1 GA exactly as final_comparison.py does (pop=40, gen=50, seed=1, 3-seed fitness)...
+  GA done in 99s theta=[32.784 30.785 52.154] final train fitness=60.826s
+re-run theta matches results_multiseed.json: True
+{
+ "fixed_30s": {
+  "light": 13.3,
+  "moderate": 24.4,
+  "uneven": 506.3,
+  "rush_hour": 191.5,
+  "heavy": 465.4
+ },
+ "fuzzy_v1_default": {
+  "light": 12.8,
+  "moderate": 23.9,
+  "uneven": 338.3,
+  "rush_hour": 86.8,
+  "heavy": 428.2
+ },
+ "fuzzy_v1_ga_multiseed(official)": {
+  "light": 13.3,
+  "moderate": 24.1,
+  "uneven": 217.7,
+  "rush_hour": 70.0,
+  "heavy": 407.9
+ },
+ "fuzzy_v1_ga_oldrun(earlier single-seed GA, superseded)": {
+  "light": 12.6,
+  "moderate": 23.1,
+  "uneven": 228.9,
+  "rush_hour": 73.3,
+  "heavy": 408.5
+ }
+}
+fuzzy_v1_default {'mean_all5_pct': 20.2, 'mean_held_out_pct': 31.3, 'mean_trained_on_pct': 12.7}
+fuzzy_v1_ga_multiseed(official) {'mean_all5_pct': 26.8, 'mean_held_out_pct': 37.9, 'mean_trained_on_pct': 19.5}
+fuzzy_v1_ga_oldrun(earlier single-seed GA, superseded) {'mean_all5_pct': 27.8, 'mean_held_out_pct': 37.0, 'mean_trained_on_pct': 21.7}
+--- phase 0: re-run v1 + baseline_v1.json: exit 0 (99s)
+
+=== phase 2: baselines on TRAIN ===
+3s  best fixed (normalised) = 29s, best fixed (raw mean) = 56s, fixed30 ratio=1.219, best ratio=1.219
+actuated best gain (normalised) = 3.0, ratio=0.525; (raw) = 2.5
+ratio by duration (every 5s): {10: 1.784, 15: 1.402, 20: 1.266, 25: 1.222, 30: 1.219, 35: 1.227, 40: 1.28, 45: 1.306, 50: 1.347, 55: 1.397, 60: 1.434}
+--- phase 2: baselines on TRAIN: exit 0 (3s)
+
+(quick) reusing data/opt_results.json
+
+=== optimizer analysis ===
+| structure | optimizer | train fitness (mean ± sd over 3 seeds) | best train | validation (mean) | best validation | evals to reach 95% of final improvement | wall s/run |
+|---|---|---|---|---|---|---|---|
+| fuzzy1_new | GA | 0.6391 ± 0.0001 | 0.6390 | 0.7135 | 0.7124 | 383 | 1891 |
+| fuzzy1_new | PSO | 0.6392 ± 0.0008 | 0.6381 | 0.7048 | 0.6979 | 367 | 1657 |
+| fuzzy1_new | SA | 0.6395 ± 0.0002 | 0.6393 | 0.7141 | 0.7130 | 713 | 1605 |
+| fuzzy2_bp | GA | 0.4143 ± 0.0019 | 0.4126 | 0.5103 | 0.5090 | 637 | 2348 |
+| fuzzy2_bp | PSO | 0.4186 ± 0.0047 | 0.4119 | 0.5156 | 0.5079 | 590 | 2367 |
+| fuzzy2_bp | SA | 0.4189 ± 0.0017 | 0.4165 | 0.5151 | 0.5132 | 723 | 2383 |
+| fuzzy2_bpw | GA | 0.4157 ± 0.0014 | 0.4143 | 0.5162 | 0.5131 | 940 | 2426 |
+| fuzzy2_bpw | PSO | 0.4139 ± 0.0010 | 0.4126 | 0.5122 | 0.5102 | 790 | 2472 |
+| fuzzy2_bpw | SA | 0.4183 ± 0.0050 | 0.4131 | 0.5210 | 0.5133 | 1183 | 2523 |
+--- optimizer analysis: exit 0 (0s)
+
+=== export validation-selected controllers ===
+official v2 candidate (by validation): fuzzy2_bp_PSO {'seed': 2, 'train_fitness': 0.411941195106876, 'val_fitness': 0.5079109934874632}
+--- export validation-selected controllers: exit 0 (0s)
+
+=== fuzzy-v2 rules ===
+FUZZY-V2 RULE BASE (27 rules, IF own_queue AND waiting AND opposing_queue THEN green)
+
+R01: IF own_queue is low  AND waiting is short    AND opposing_queue is low  THEN green is short
+R02: IF own_queue is low  AND waiting is short    AND opposing_queue is med  THEN green is short
+R03: IF own_queue is low  AND waiting is short    AND opposing_queue is high THEN green is short
+R04: IF own_queue is low  AND waiting is moderate AND opposing_queue is low  THEN green is short
+R05: IF own_queue is low  AND waiting is moderate AND opposing_queue is med  THEN green is short
+R06: IF own_queue is low  AND waiting is moderate AND opposing_queue is high THEN green is short
+R07: IF own_queue is low  AND waiting is long     AND opposing_queue is low  THEN green is short
+R08: IF own_queue is low  AND waiting is long     AND opposing_queue is med  THEN green is short
+R09: IF own_queue is low  AND waiting is long     AND opposing_queue is high THEN green is short
+R10: IF own_queue is med  AND waiting is short    AND opposing_queue is low  THEN green is medium
+R11: IF own_queue is med  AND waiting is short    AND opposing_queue is med  THEN green is short
+R12: IF own_queue is med  AND waiting is short    AND opposing_queue is high THEN green is short
+R13: IF own_queue is med  AND waiting is moderate AND opposing_queue is low  THEN green is medium
+R14: IF own_queue is med  AND waiting is moderate AND opposing_queue is med  THEN green is medium
+R15: IF own_queue is med  AND waiting is moderate AND opposing_queue is high THEN green is short
+R16: IF own_queue is med  AND waiting is long     AND opposing_queue is low  THEN green is long
+R17: IF own_queue is med  AND waiting is long     AND opposing_queue is med  THEN green is long
+R18: IF own_queue is med  AND waiting is long     AND opposing_queue is high THEN green is medium
+R19: IF own_queue is high AND waiting is short    AND opposing_queue is low  THEN green is long
+R20: IF own_queue is high AND waiting is short    AND opposing_queue is med  THEN green is long
+R21: IF own_queue is high AND waiting is short    AND opposing_queue is high THEN green is long
+R22: IF own_queue is high AND waiting is moderate AND opposing_queue is low  THEN green is long
+R23: IF own_queue is high AND waiting is moderate AND opposing_queue is med  THEN green is long
+R24: IF own_queue is high AND waiting is moderate AND opposing_queue is high THEN green is long
+R25: IF own_queue is high AND waiting is long     AND opposing_queue is low  THEN green is long
+R26: IF own_queue is high AND waiting is long     AND opposing_queue is med  THEN green is long
+R27: IF own_queue is high AND waiting is long     AND opposing_queue is high THEN green is long
+
+Rule construction (so the table is explainable, not arbitrary):
+  base level = own-queue level (low->short, med->medium, high->long)
+  +1 level  if waiting is 'long' and own queue >= med   (a starved approach with demand clears)
+  -1 level  if opposing queue is 'high' and own queue is not high   (yield to the heavier side)
+  -1 level  if waiting is 'short', own is 'med' and opposing is not 'low'   (it just had green; share the cycle)
+  levels clipped to [short..long].  When BOTH queues are high the rule is 'long': in saturation long greens
+  waste the least time on the 3 s clearance interval.
+
+Inference: min (AND), optional per-rule weight multiplies firing strength, max aggregation, centroid defuzzification.
+Gene encoding: 12 breakpoints (a<b<c for own_queue, waiting, opposing_queue, green) + optional 27 rule weights in [0.2,1].
+Default breakpoints (own, wait, opp, green):  (6,25,50), (12,55,100), (6,25,50), (15,35,55)
+
+--- fuzzy-v2 rules: exit 0 (0s)
+
+=== unit tests ===
+.......................
+----------------------------------------------------------------------
+Ran 23 tests in 1.039s
+
+OK
+
+  [monotonicity] fuzzy_v2_default: own-queue violations=0, opposing-queue violations=0 (of 1024 checks each)
+
+  [monotonicity] fuzzy2_bp_GA: own-queue violations=3, opposing-queue violations=0 (of 1024 checks each)
+
+  [monotonicity] fuzzy2_bp_PSO: own-queue violations=0, opposing-queue violations=6 (of 1024 checks each)
+
+  [monotonicity] fuzzy2_bp_SA: own-queue violations=0, opposing-queue violations=18 (of 1024 checks each)
+
+  [monotonicity] fuzzy2_bpw_GA: own-queue violations=0, opposing-queue violations=0 (of 1024 checks each)
+
+  [monotonicity] fuzzy2_bpw_PSO: own-queue violations=0, opposing-queue violations=0 (of 1024 checks each)
+
+  [monotonicity] fuzzy2_bpw_SA: own-queue violations=0, opposing-queue violations=11 (of 1024 checks each)
+--- unit tests: exit 0 (1s)
+
+=== validation dry run ===
+done in 9s; official v2 candidate (by validation): fuzzy2_bp_PSO
+fixed_30s                    mean delay    207.1s   vs fixed30   +0.0% [+0.0,+0.0]  vs v1GA  -54.7%  vs actuated -193.8%
+best_fixed_29s               mean delay    208.4s   vs fixed30   +0.1% [-1.2,+1.4]  vs v1GA  -54.7%  vs actuated -194.0%
+best_fixed_56s               mean delay    191.7s   vs fixed30   -5.8% [-18.1,+5.0]  vs v1GA  -57.3%  vs actuated -192.3%
+actuated                     mean delay    128.8s   vs fixed30  +48.5% [+38.2,+59.5]  vs v1GA  +31.2%  vs actuated   +0.0%
+pressure_split               mean delay    145.8s   vs fixed30  +19.6% [-0.1,+38.8]  vs v1GA   -5.2%  vs actuated  -58.2%
+longest_queue_first          mean delay    143.3s   vs fixed30  +16.2% [-6.1,+36.9]  vs v1GA   -9.5%  vs actuated  -67.0%
+fuzzy_v1_default             mean delay    166.1s   vs fixed30  +23.6% [+17.6,+30.5]  vs v1GA  -10.3%  vs actuated  -88.3%
+fuzzy_v1_GA_official         mean delay    151.5s   vs fixed30  +28.9% [+21.0,+37.5]  vs v1GA   +0.0%  vs actuated  -67.3%
+fuzzy_v2_default             mean delay    139.9s   vs fixed30  +39.8% [+30.1,+50.4]  vs v1GA  +17.7%  vs actuated  -26.4%
+fuzzy1_new_GA                mean delay    157.8s   vs fixed30  +28.9% [+22.3,+36.3]  vs v1GA   -1.8%  vs actuated  -72.4%
+fuzzy1_new_PSO               mean delay    154.7s   vs fixed30  +30.3% [+23.5,+38.0]  vs v1GA   +0.9%  vs actuated  -66.1%
+fuzzy1_new_SA                mean delay    158.2s   vs fixed30  +28.8% [+22.3,+36.2]  vs v1GA   -1.9%  vs actuated  -72.4%
+fuzzy2_bp_GA                 mean delay    127.3s   vs fixed30  +49.2% [+38.5,+60.5]  vs v1GA  +32.5%  vs actuated   +3.0%
+fuzzy2_bp_PSO                mean delay    126.9s   vs fixed30  +49.3% [+38.7,+60.7]  vs v1GA  +32.7%  vs actuated   +3.5%
+fuzzy2_bp_SA                 mean delay    127.9s   vs fixed30  +48.7% [+38.5,+59.7]  vs v1GA  +31.6%  vs actuated   +0.6%
+fuzzy2_bpw_GA                mean delay    128.8s   vs fixed30  +48.7% [+38.0,+60.3]  vs v1GA  +31.9%  vs actuated   +2.6%
+fuzzy2_bpw_PSO               mean delay    127.2s   vs fixed30  +49.1% [+38.4,+60.6]  vs v1GA  +32.5%  vs actuated   +3.3%
+fuzzy2_bpw_SA                mean delay    128.5s   vs fixed30  +48.7% [+38.0,+60.3]  vs v1GA  +31.9%  vs actuated   +2.5%
+oracle_fixed_UNREALISABLE    mean delay    186.5s   vs fixed30  +15.7% [+10.5,+21.8]  vs v1GA  -32.1%  vs actuated -153.2%
+DECISION {"v2_candidate": "fuzzy2_bp_PSO", "mean_pct_reduction_vs_v1_GA": 32.69845654058914, "ci95": [22.728523896546005, 43.41382814119219], "promote_v2": true, "rule": "promote v2 only if mean paired reduction vs v1+GA > 0 and the 95% bootstrap CI excludes zero"}
+--- validation dry run: exit 0 (9s)
+
+TEST already evaluated once (data/TEST_TOUCHED): keeping results_v2.json. Use --redo-test to repeat.
+
+=== RESULTS.md ===
+wrote /Users/rithhek/Downloads/traffic_project_code/v2/RESULTS.md
+--- RESULTS.md: exit 0 (0s)
+
+=== v2 replays (promoted) ===
+uneven seed 99: {'fixed_30s_avg_delay_s': 506.28, 'controller': 'fuzzy_v2_best', 'controller_avg_delay_s': 39.03, 'improvement_pct': 92.29, 'scenario': 'uneven', 'note': 'single seed; one run is an illustration, not evidence (see RESULTS.md for the 60-scenario test)'}
+--- v2 replays (promoted): exit 0 (0s)
+
+ALL DONE

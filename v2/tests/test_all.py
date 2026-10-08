@@ -192,6 +192,21 @@ class TestControllers(unittest.TestCase):
         self.assertTrue(10 <= min(60, max(10, fuzzy2.Fuzzy2(g)(20, 40, 10))) <= 60)
 
 
+class TestOptimizers(unittest.TestCase):
+    def test_budget_determinism_and_progress(self):
+        import optimizers as O
+        f = lambda x: float(np.sum((x - 0.3) ** 2))
+        bounds = np.array([[-1.0, 1.0]] * 5); x0 = np.full(5, 0.9)
+        for name, fn in O.OPTIMIZERS.items():
+            a = fn(f, bounds, budget=300, seed=4, x0=x0); b = fn(f, bounds, budget=300, seed=4, x0=x0); c = fn(f, bounds, budget=300, seed=5, x0=x0)
+            self.assertEqual(len(a[2]), 300, name)                                   # identical evaluation budget
+            self.assertTrue(np.array_equal(a[0], b[0]) and a[1] == b[1], name)       # same seed -> same result
+            self.assertNotEqual(a[1], c[1], name)                                    # different seed -> different path
+            self.assertTrue(all(a[2][i] >= a[2][i + 1] for i in range(299)), name)   # best-so-far is monotone
+            self.assertLess(a[1], f(x0), name)                                       # improves on the injected start
+            self.assertTrue(np.all(a[0] >= bounds[:, 0]) and np.all(a[0] <= bounds[:, 1]), name)
+
+
 class TestServer(unittest.TestCase):
     def test_simulate_request_matches_direct_run(self):
         import server
