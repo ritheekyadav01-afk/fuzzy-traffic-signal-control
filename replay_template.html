@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Traffic Replay</title>
+<style>
+:root{--bg:#05070c;--panel:#0d121f;--line:#1b2436;--blue:#3b82f6;--blue-bright:#60a5fa;--cyan:#22d3ee;--green:#34d399;--text:#e7ecf5;--text-dim:#8b96ab;--amber:#fbbf24;--red:#7f1d1d;
+--mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);padding:24px 16px}
+.wrap{max-width:1100px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--text-dim);font-family:var(--mono);font-size:12px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{margin:0 0 10px;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+.card h2 .tag{font-family:var(--mono);font-size:11px;color:var(--text-dim);font-weight:400}
+.fz h2{color:var(--cyan)}
+svg{width:100%;height:auto;display:block;background:#080c16;border:1px solid var(--line);border-radius:10px}
+.road{fill:#111827}.lane{stroke:var(--line);stroke-width:1;stroke-dasharray:6 6}
+.car{fill:var(--blue-bright);filter:drop-shadow(0 0 3px var(--blue))}
+.fz .car{fill:var(--cyan);filter:drop-shadow(0 0 3px var(--cyan))}
+.more{fill:var(--text-dim);font-family:var(--mono);font-size:11px}
+.lt{fill:#1f2937;transition:fill .15s,filter .15s}
+.lt.g{fill:var(--green);filter:drop-shadow(0 0 7px var(--green))}
+.lt.a{fill:var(--amber);filter:drop-shadow(0 0 6px var(--amber))}
+.lt.r{fill:var(--red)}
+.lbl{fill:var(--text-dim);font-family:var(--mono);font-size:10px}
+.stats{display:flex;justify-content:space-between;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--text-dim)}
+.big{font-size:26px;color:var(--text);display:block}
+.stats b{color:var(--text);font-weight:600}
+.ctl{margin-top:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+button,select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-family:var(--mono);font-size:13px;cursor:pointer}
+button:hover,select:hover{border-color:var(--blue)}
+#scrub{flex:1;min-width:200px;accent-color:var(--blue)}
+.cl{min-width:110px}
+#summary{display:none;margin-top:16px;border-color:var(--blue);box-shadow:0 0 24px rgba(59,130,246,.2)}
+#summary.show{display:block}
+.srow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;font-family:var(--mono)}
+.srow div{padding:8px}.srow small{display:block;color:var(--text-dim);font-size:11px;margin-bottom:4px}
+.srow span{font-size:28px}.imp span{color:var(--green)}
+.banner{text-align:center;font-size:30px;font-weight:700;color:var(--cyan);text-shadow:0 0 18px rgba(34,211,238,.35);margin:0 0 16px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;font-variant-numeric:tabular-nums}
+.banner.behind{color:var(--amber);text-shadow:none}
+.chart{margin-top:16px}
+.chart svg{background:transparent;border:0}
+.legend{display:flex;gap:16px;font-family:var(--mono);font-size:12px;color:var(--text-dim)}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.axis{stroke:var(--line);stroke-width:1}.tick{fill:var(--text-dim);font-family:var(--mono);font-size:11px}
+.cl{font-family:var(--mono);font-size:13px;color:var(--text-dim);text-align:right;line-height:1.3}.cl small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em}.cl b{color:var(--text);font-weight:600}
+.bg{fill:var(--panel);stroke:var(--blue);stroke-width:1}.bt{fill:var(--text);font-family:var(--mono);font-size:11px;text-anchor:middle}
+@media(max-width:760px){.srow{grid-template-columns:1fr}.banner{font-size:20px}}
+</style></head><body><div class="wrap">
+<h1>Fixed-Timer vs. Fuzzy + GA</h1>
+<div class="sub">scenario: uneven · NS 0.35/s · EW 0.10/s · 3600 s · pre-recorded trace replay</div>
+<div class="banner" id="banner">—</div>
+<div class="grid">
+ <div class="card" id="p0"><h2>Fixed-Timer <span class="tag phase">—</span></h2><div class="svgslot"></div>
+  <div class="stats"><div>Total delay so far<span class="big delay">0</span></div><div>Queue NS / EW<span class="big q">0 / 0</span></div></div></div>
+ <div class="card fz" id="p1"><h2>Fuzzy + GA <span class="tag phase">—</span></h2><div class="svgslot"></div>
+  <div class="stats"><div>Total delay so far<span class="big delay">0</span></div><div>Queue NS / EW<span class="big q">0 / 0</span></div></div></div>
+</div>
+<div class="card chart"><h2>Cumulative delay <span class="legend"><span><i style="background:var(--blue-bright)"></i>Fixed-Timer</span><span><i style="background:var(--cyan)"></i>Fuzzy + GA</span></span></h2><div id="chartslot"></div></div>
+<div class="ctl card">
+ <button id="play">▶ Play</button><button id="restart">↺ Restart</button>
+ <input type="range" id="scrub" min="0" value="0" step="1">
+ <select id="speed"><option value="1">1x</option><option value="2">2x</option><option value="5">5x</option></select>
+ <div class="cl"><small>Simulated time</small><b id="clock">8:00:00 AM</b></div>
+</div>
+<div class="card" id="summary"><h2>Summary <span class="tag" id="sumsub"></span></h2>
+ <div class="srow"><div><small>Fixed-Timer total delay</small><span id="sf"></span></div>
+ <div><small>Fuzzy + GA total delay</small><span id="sg"></span></div>
+ <div class="imp"><small>Reduction</small><span id="si"></span></div></div></div>
+</div>
+<script>
+const TRACES = /*TRACES*/;
+(function(){
+const A=TRACES.fixed,B=TRACES.fuzzy_ga,N=Math.min(A.length,B.length);
+const BASE_TPS=N/90;            // default 1x: full trace in ~90 s
+const CAP=25,PITCH=12,C=200,HALF=30;
+const NS='http://www.w3.org/2000/svg';
+function el(p,n,a,t){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;p.appendChild(e);return e}
+function build(card){
+ const s=el(document.createElement('div'),'svg',{viewBox:'0 0 400 400'});
+ card.querySelector('.svgslot').appendChild(s);
+ el(s,'rect',{x:C-HALF,y:0,width:2*HALF,height:400,class:'road'});
+ el(s,'rect',{x:0,y:C-HALF,width:400,height:2*HALF,class:'road'});
+ el(s,'line',{x1:C,y1:0,x2:C,y2:C-HALF,class:'lane'});el(s,'line',{x1:C,y1:C+HALF,x2:C,y2:400,class:'lane'});
+ el(s,'line',{x1:0,y1:C,x2:C-HALF,y2:C,class:'lane'});el(s,'line',{x1:C+HALF,y1:C,x2:400,y2:C,class:'lane'});
+ const ns=el(s,'g',{}),ew=el(s,'g',{});
+ const lns=el(s,'circle',{cx:C+HALF+16,cy:C-HALF-16,r:9,class:'lt'});
+ const lew=el(s,'circle',{cx:C-HALF-16,cy:C+HALF+16,r:9,class:'lt'});
+ el(s,'text',{x:C+HALF+30,y:C-HALF-12,class:'lbl'},'NS');
+ el(s,'text',{x:C-HALF-46,y:C+HALF+20,class:'lbl'},'EW');
+ function badge(x,y){const g=el(s,'g',{transform:`translate(${x},${y})`,display:'none'});el(g,'rect',{class:'bg',x:-20,y:-11,width:40,height:22,rx:11});return {g,t:el(g,'text',{class:'bt',y:4},'')}}
+ const mns=badge(C+HALF+30,22),mew=badge(30,C-HALF-22);
+ return {ns,ew,lns,lew,mns,mew,card,last:-1};
+}
+const P=[build(document.getElementById('p0')),build(document.getElementById('p1'))];
+function cars(g,n,vertical){
+ g.textContent='';
+ for(let i=0;i<n;i++){const row=Math.floor(i/2),lane=i%2;
+  if(vertical) el(g,'rect',{class:'car',rx:2,width:18,height:9,x:C-HALF+3+lane*27,y:C-HALF-8-PITCH-row*PITCH});
+  else el(g,'rect',{class:'car',rx:2,width:9,height:18,x:C-HALF-8-10-row*PITCH,y:C-HALF+3+lane*27});
+ }}
+function light(c,on,phase){c.classList.remove('g','a','r');c.classList.add(phase==='clearance'?'a':on?'g':'r')}
+function draw(p,tr,i){
+ const f=tr[i],qn=Math.round(f.queue_ns),qe=Math.round(f.queue_ew);
+ const key=qn+'|'+qe;
+ if(p.lastq!==key){p.lastq=key;
+  cars(p.ns,Math.min(qn,CAP),true);cars(p.ew,Math.min(qe,CAP),false);
+  for(const [m,q] of [[p.mns,qn],[p.mew,qe]]){m.g.setAttribute('display',q>CAP?'':'none');m.t.textContent='+'+(q-CAP)}}
+ light(p.lns,f.phase==='NS',f.phase);light(p.lew,f.phase==='EW',f.phase);
+ p.card.querySelector('.phase').textContent=f.phase==='clearance'?'CLEARANCE':f.phase+' GREEN';
+ p.card.querySelector('.delay').textContent=Math.round(f.cumulative_delay).toLocaleString()+' veh·s';
+ p.card.querySelector('.q').textContent=qn+' / '+qe;
+}
+const scrub=document.getElementById('scrub'),play=document.getElementById('play'),speed=document.getElementById('speed'),clock=document.getElementById('clock'),sum=document.getElementById('summary');
+scrub.max=N-1;
+const banner=document.getElementById('banner');
+const CW=1068,CH=220,ML=70,MR=12,MT=10,MB=26,YMAX=Math.max(A[N-1].cumulative_delay,B[N-1].cumulative_delay),TMAX=A[N-1].t;
+const cs=el(document.createElement('div'),'svg',{viewBox:`0 0 ${CW} ${CH}`});document.getElementById('chartslot').appendChild(cs);
+const X=t=>ML+t/TMAX*(CW-ML-MR),Y=v=>CH-MB-v/YMAX*(CH-MT-MB);
+for(let k=0;k<=4;k++){const v=YMAX*k/4;el(cs,'line',{class:'axis',x1:ML,x2:CW-MR,y1:Y(v),y2:Y(v)});el(cs,'text',{class:'tick',x:ML-8,y:Y(v)+4,'text-anchor':'end'},Math.round(v/1000)+'k')}
+for(let k=0;k<=6;k++){const t=TMAX*k/6;el(cs,'text',{class:'tick',x:X(t),y:CH-8,'text-anchor':k==6?'end':'middle'},clockStr(t,true))}
+const LA=el(cs,'polyline',{fill:'none',stroke:'var(--blue-bright)','stroke-width':2.5,'stroke-linejoin':'round'}),LB=el(cs,'polyline',{fill:'none',stroke:'var(--cyan)','stroke-width':2.5,'stroke-linejoin':'round'});
+function line(tr,i){let o='';for(let k=0;k<=i;k+=4)o+=X(tr[k].t)+','+Y(tr[k].cumulative_delay)+' ';if(i%4)o+=X(tr[i].t)+','+Y(tr[i].cumulative_delay);return o}
+function clockStr(sec,short){sec=Math.round(sec);const tot=8*3600+sec,h=Math.floor(tot/3600)%24,m=Math.floor(tot/60)%60,x=tot%60,ap=h>=12?'PM':'AM',h12=h%12||12;
+ return h12+':'+String(m).padStart(2,'0')+(short?'':':'+String(x).padStart(2,'0'))+' '+ap}
+function updBanner(f,g){const d=f>0?(f-g)/f*100:0;
+ banner.classList.toggle('behind',d<0);
+ banner.textContent=d<0?'Fixed-Timer is currently ahead by '+(-d).toFixed(1)+'%':'Fuzzy + GA is currently '+d.toFixed(1)+'% less congested'}
+let pos=0,playing=false,prev=0;
+function render(){const i=Math.max(0,Math.min(N-1,Math.floor(pos)));draw(P[0],A,i);draw(P[1],B,i);
+ scrub.value=i;clock.textContent=clockStr(A[i].t);
+ updBanner(A[i].cumulative_delay,B[i].cumulative_delay);LA.setAttribute('points',line(A,i));LB.setAttribute('points',line(B,i));
+ if(i>=N-1)finish();else sum.classList.remove('show');}
+function finish(){
+ playing=false;play.textContent='▶ Play';
+ const f=A[N-1].cumulative_delay,g=B[N-1].cumulative_delay;
+ document.getElementById('sf').textContent=Math.round(f).toLocaleString()+' veh·s';
+ document.getElementById('sg').textContent=Math.round(g).toLocaleString()+' veh·s';
+ document.getElementById('si').textContent=((f-g)/f*100).toFixed(1)+'%';
+ document.getElementById('sumsub').textContent='computed from loaded traces';
+ sum.classList.add('show');}
+function frame(now){
+ if(!playing)return;
+ pos=Math.max(0,Math.min(N-1,pos+Math.max(0,now-prev)/1000*BASE_TPS*(+speed.value)));prev=now;render();
+ if(playing)requestAnimationFrame(frame);}
+play.onclick=()=>{
+ if(playing){playing=false;play.textContent='▶ Play';return}
+ if(pos>=N-1)pos=0;
+ playing=true;play.textContent='⏸ Pause';sum.classList.remove('show');prev=performance.now();requestAnimationFrame(frame);};
+document.getElementById('restart').onclick=()=>{pos=0;prev=performance.now();render()};
+scrub.oninput=()=>{pos=+scrub.value;render();if(playing)prev=performance.now()};
+render();
+})();
+</script></body></html>

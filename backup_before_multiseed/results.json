@@ -1,0 +1,87 @@
+{
+  "best_theta": [
+    26.36,
+    28.995,
+    49.378
+  ],
+  "default_theta": [
+    25.0,
+    60.0,
+    35.0
+  ],
+  "ga_history": [
+    76.468,
+    74.729,
+    74.729,
+    74.684,
+    74.273,
+    74.273,
+    74.273,
+    74.273,
+    74.273,
+    74.243,
+    74.237,
+    74.237,
+    74.054,
+    74.054,
+    74.054,
+    74.054,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981,
+    73.981
+  ],
+  "results": {
+    "light": {
+      "fixed": 13.270661157024794,
+      "fuzzy": 12.832644628099173,
+      "fuzzy_ga": 12.603305785123966,
+      "improvement_vs_fixed_pct": 5.028802740152582,
+      "improvement_vs_fuzzy_pct": 1.7871518274029927,
+      "held_out": false
+    },
+    "moderate": {
+      "fixed": 24.36076817558299,
+      "fuzzy": 23.934499314128942,
+      "fuzzy_ga": 23.103909465020575,
+      "improvement_vs_fixed_pct": 5.159355819584441,
+      "improvement_vs_fuzzy_pct": 3.470262060665109,
+      "held_out": false
+    },
+    "uneven": {
+      "fixed": 506.27966625463534,
+      "fuzzy": 338.2805933250927,
+      "fuzzy_ga": 228.89616810877627,
+      "improvement_vs_fixed_pct": 54.78859149092272,
+      "improvement_vs_fuzzy_pct": 32.33541248734785,
+      "held_out": false
+    },
+    "rush_hour": {
+      "fixed": 191.51525320317268,
+      "fuzzy": 86.80689444783404,
+      "fuzzy_ga": 73.3306894447834,
+      "improvement_vs_fixed_pct": 61.71026160146674,
+      "improvement_vs_fuzzy_pct": 15.52434871535355,
+      "held_out": true
+    },
+    "heavy": {
+      "fixed": 465.40546218487395,
+      "fuzzy": 428.2061157796452,
+      "fuzzy_ga": 408.4579831932773,
+      "improvement_vs_fixed_pct": 12.236100264971814,
+      "improvement_vs_fuzzy_pct": 4.611828710202326,
+      "held_out": true
+    }
+  },
+  "headline_improvement_pct": 27.8
+}
