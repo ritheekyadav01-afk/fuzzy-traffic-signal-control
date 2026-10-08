@@ -1,1 +1,11 @@
 27 tasks, budget 2000 evals each
+[ 2326s] fuzzy2_bpw GA  seed1  train=0.4152  val=0.5131  (2326s)
+[ 2341s] fuzzy2_bp  GA  seed2  train=0.4126  val=0.5090  (2341s)
+[ 2350s] fuzzy2_bp  PSO seed1  train=0.4218  val=0.5204  (2350s)
+[ 2351s] fuzzy2_bp  GA  seed3  train=0.4170  val=0.5101  (2351s)
+[ 2352s] fuzzy2_bp  GA  seed1  train=0.4134  val=0.5120  (2352s)
+[ 2365s] fuzzy2_bp  PSO seed2  train=0.4119  val=0.5079  (2365s)
+[ 2378s] fuzzy2_bp  SA  seed2  train=0.4198  val=0.5132  (2378s)
+[ 2383s] fuzzy2_bp  SA  seed1  train=0.4165  val=0.5142  (2383s)
+[ 2387s] fuzzy2_bp  PSO seed3  train=0.4220  val=0.5183  (2387s)
+[ 2388s] fuzzy2_bp  SA  seed3  train=0.4203  val=0.5178  (2388s)

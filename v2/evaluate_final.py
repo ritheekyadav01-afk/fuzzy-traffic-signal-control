@@ -154,7 +154,7 @@ def legacy(specs):
         d = H.evaluate(s, 'legacy')['avg_delay_sec']
         rows[n] = {sc['name']: float(x) for sc, x in zip(H.SETS['legacy'], d)}
     f = rows['fixed_30s']
-    imp = {n: {k: (f[k] - v) / f[k] * 100 for k in f} for n, v in rows.items()}
+    imp = {n: {k: (f[k] - row[k]) / f[k] * 100 for k in f} for n, row in rows.items()}
     held = ('rush_hour', 'heavy')
     return {'avg_delay_s': rows, 'pct_vs_fixed_30s': imp,
             'summary': {n: {'mean_all5': float(np.mean(list(i.values()))), 'mean_held_out(rush_hour,heavy)': float(np.mean([i[k] for k in held])), 'uneven': i['uneven']} for n, i in imp.items()}}
