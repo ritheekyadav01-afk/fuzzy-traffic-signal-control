@@ -46,3 +46,6 @@ Conventions: all commands use `/usr/bin/python3` (3.9.6, numpy 2.0.2, **no matpl
 - Server smoke test: /healthz, /api/predict, /replay (1.6 MB page, 0 external script tags), POST /api/simulate, bad controller -> HTTP 400.
 - Test finding: fuzzy-v2 default is monotone only to within 1 s: 27 sub-second violations (max 0.93 s) out of 2048 grid checks, caused by centroid blending. Test tolerance set to 1 s and the caveat documented rather than hidden.
 - Sanity number: actuated rule on legacy `uneven` seed 99 = 49.2 s vs fixed-30 506.3 s (90.3%), v1 fuzzy+GA = 217.7 s (57.0%). Confirms the Phase-2 finding.
+
+## [tooling] written while optimizers run (20:28-20:50 IST)
+- `evaluate_final.py` (guarded: TEST needs `--final`, lock file `data/TEST_TOUCHED`), `make_report.py`, `analyze_optimizers.py`, `export_controllers.py`, `build_v2_replays.py`, `run_all.py`, `README.md`, `requirements.txt`.

@@ -129,6 +129,13 @@ def main():
     if a.set == 'test':
         out['legacy_scenarios'] = legacy(specs)
         json.dump(out, open(os.path.join(H.HERE, 'results_v2.json'), 'w'), indent=1)
+        cp = os.path.join(DATA, 'controllers.json')
+        if os.path.exists(cp) and 'decision' in out:
+            with open(cp) as fh:
+                cj = json.load(fh)
+            cj['promoted'] = out['decision']['promote_v2']
+            with open(cp, 'w') as fh:
+                json.dump(cj, fh, indent=1)
         open(lock, 'a').write(time.strftime('%Y-%m-%d %H:%M:%S') + ' test evaluation finished\n')
     else:
         out['legacy_scenarios'] = legacy(specs)
