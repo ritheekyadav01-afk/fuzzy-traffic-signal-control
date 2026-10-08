@@ -49,3 +49,12 @@ Conventions: all commands use `/usr/bin/python3` (3.9.6, numpy 2.0.2, **no matpl
 
 ## [tooling] written while optimizers run (20:28-20:50 IST)
 - `evaluate_final.py` (guarded: TEST needs `--final`, lock file `data/TEST_TOUCHED`), `make_report.py`, `analyze_optimizers.py`, `export_controllers.py`, `build_v2_replays.py`, `run_all.py`, `README.md`, `requirements.txt`.
+
+## [phase 5 result] 27 optimizer runs finished (20:28-22:15 IST, ~40 min/run on contended cores) -> data/opt_results.json, data/optimizer_table.md
+- All three structures converge to the same plateau regardless of optimizer: fuzzy-v2 (12 genes) train fitness 0.414-0.419, fuzzy-v2+weights (39 genes) 0.414-0.418, v1 structure RE-TRAINED on the new data 0.639 (v1 official: 0.660 on this TRAIN set).
+  => the gain is from the controller STRUCTURE (opposing-queue input, wider output universe), not from more data / more optimisation: re-training v1's 3-centre controller on 40 scenarios gives 0.639 train / 0.70-0.71 val, i.e. almost no better than the original v1 theta.
+- Optimizer ranking is not decisive: GA reached the best mean train fitness for fuzzy2_bp (0.4143 +- 0.0019), PSO for fuzzy2_bpw (0.4139) and PSO had the best single run (0.4119). Differences between optimizers (<=0.005) are about the size of seed-to-seed spread. Fastest to 95% of improvement: PSO (590 evals) < GA (637) < SA (723) on fuzzy2_bp.
+- Weighted rules (39 genes) did NOT help beyond 12 breakpoints (val 0.510-0.521 vs 0.508-0.515); slower convergence (790-1183 evals). Parsimony wins.
+- Selected by VALIDATION: fuzzy2_bp_PSO (seed 2), val 0.5079. Margin over the next candidates is ~0.001-0.002 = noise; selection is nominal, not a real discovery.
+- Monotonicity of trained controllers (tolerance 1 s, 1024 grid checks each way): GA 3/0, PSO 0/6, SA 0/18, bpw-GA 0/0, bpw-PSO 0/0, bpw-SA 0/11 violations (own-queue / opposing-queue). Default: 0/0. Trained controllers are mostly monotone but not guaranteed to be.
+- Validation dry run (not the official numbers): fuzzy2_bp_PSO vs actuated +3.5% [+0.5,+7.0]; vs v1+GA +32.7% [+22.7,+43.4].
