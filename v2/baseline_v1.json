@@ -1,0 +1,178 @@
+{
+  "eval_seed": 99,
+  "duration_s": 3600,
+  "scenarios": {
+    "light": [
+      0.1,
+      0.1
+    ],
+    "moderate": [
+      0.2,
+      0.2
+    ],
+    "uneven": [
+      0.35,
+      0.1
+    ],
+    "rush_hour": [
+      0.26,
+      0.19
+    ],
+    "heavy": [
+      0.3,
+      0.3
+    ]
+  },
+  "held_out_in_v1": [
+    "rush_hour",
+    "heavy"
+  ],
+  "theta_official_multiseed": [
+    32.784,
+    30.785,
+    52.154
+  ],
+  "theta_oldrun": [
+    32.784,
+    30.785,
+    52.154
+  ],
+  "theta_rerun_this_session": [
+    32.783710241502185,
+    30.78504708718317,
+    52.15352715445358
+  ],
+  "rerun_matches_official": true,
+  "delays": {
+    "fixed_30s": {
+      "light": {
+        "avg_delay_sec": 13.270661157024794,
+        "total_vehicles": 726
+      },
+      "moderate": {
+        "avg_delay_sec": 24.36076817558299,
+        "total_vehicles": 1458
+      },
+      "uneven": {
+        "avg_delay_sec": 506.27966625463534,
+        "total_vehicles": 1618
+      },
+      "rush_hour": {
+        "avg_delay_sec": 191.51525320317268,
+        "total_vehicles": 1639
+      },
+      "heavy": {
+        "avg_delay_sec": 465.40546218487395,
+        "total_vehicles": 2142
+      }
+    },
+    "fuzzy_v1_default": {
+      "light": {
+        "avg_delay_sec": 12.832644628099173,
+        "total_vehicles": 726
+      },
+      "moderate": {
+        "avg_delay_sec": 23.934499314128942,
+        "total_vehicles": 1458
+      },
+      "uneven": {
+        "avg_delay_sec": 338.2805933250927,
+        "total_vehicles": 1618
+      },
+      "rush_hour": {
+        "avg_delay_sec": 86.80689444783404,
+        "total_vehicles": 1639
+      },
+      "heavy": {
+        "avg_delay_sec": 428.2061157796452,
+        "total_vehicles": 2142
+      }
+    },
+    "fuzzy_v1_ga_multiseed(official)": {
+      "light": {
+        "avg_delay_sec": 13.256198347107437,
+        "total_vehicles": 726
+      },
+      "moderate": {
+        "avg_delay_sec": 24.05281207133059,
+        "total_vehicles": 1458
+      },
+      "uneven": {
+        "avg_delay_sec": 217.73702101359703,
+        "total_vehicles": 1618
+      },
+      "rush_hour": {
+        "avg_delay_sec": 69.96491763270286,
+        "total_vehicles": 1639
+      },
+      "heavy": {
+        "avg_delay_sec": 407.94677871148457,
+        "total_vehicles": 2142
+      }
+    },
+    "fuzzy_v1_ga_oldrun(single-seed; used by v1 replays)": {
+      "light": {
+        "avg_delay_sec": 13.256198347107437,
+        "total_vehicles": 726
+      },
+      "moderate": {
+        "avg_delay_sec": 24.05281207133059,
+        "total_vehicles": 1458
+      },
+      "uneven": {
+        "avg_delay_sec": 217.73702101359703,
+        "total_vehicles": 1618
+      },
+      "rush_hour": {
+        "avg_delay_sec": 69.96491763270286,
+        "total_vehicles": 1639
+      },
+      "heavy": {
+        "avg_delay_sec": 407.94677871148457,
+        "total_vehicles": 2142
+      }
+    }
+  },
+  "summary": {
+    "fuzzy_v1_default": {
+      "improvement_vs_fixed30_pct": {
+        "light": 3.3006383309979834,
+        "moderate": 1.7498169942001294,
+        "uneven": 33.183057532681325,
+        "rush_hour": 54.67363930759955,
+        "heavy": 7.992889948174264
+      },
+      "mean_all5_pct": 20.18000842273065,
+      "mean_held_out_pct": 31.33326462788691,
+      "mean_trained_on_pct": 12.744504285959813
+    },
+    "fuzzy_v1_ga_multiseed(official)": {
+      "improvement_vs_fixed30_pct": {
+        "light": 0.10898334111786444,
+        "moderate": 1.264147756067349,
+        "uneven": 56.9927382973178,
+        "rush_hour": 63.46770481070809,
+        "heavy": 12.345940935812429
+      },
+      "mean_all5_pct": 26.835903028204704,
+      "mean_held_out_pct": 37.90682287326026,
+      "mean_trained_on_pct": 19.455289798167673
+    },
+    "fuzzy_v1_ga_oldrun(single-seed; used by v1 replays)": {
+      "improvement_vs_fixed30_pct": {
+        "light": 0.10898334111786444,
+        "moderate": 1.264147756067349,
+        "uneven": 56.9927382973178,
+        "rush_hour": 63.46770481070809,
+        "heavy": 12.345940935812429
+      },
+      "mean_all5_pct": 26.835903028204704,
+      "mean_held_out_pct": 37.90682287326026,
+      "mean_trained_on_pct": 19.455289798167673
+    }
+  },
+  "notes": [
+    "Headline 26.8% = mean of 5 legacy scenarios (multiseed theta). 37.9% = mean of the 2 held-out (rush_hour, heavy). 57.0% = uneven only.",
+    "Earlier quoted 27.8% = mean of 5 scenarios with the OLD single-seed theta; 32.5% came from an earlier 9-scenario draft not reproducible from files in this folder."
+  ]
+}
